@@ -98,7 +98,9 @@ const maybe_add_fx = (loop, fx) => {
 }
 
 // declarations
-const fx_list = ['reverb','pitch 500','flanger 15 5 +12 80 4.4 triangle 45 quadratic','oops','highpass 2000','tremolo 15 0.5','overdrive 35 90 gain -15', `echo 1.0 1.0 ${avg_len} 0.4`]
+let echo_len = avg_len / 8.0
+const fx_list = ['reverb 30 40 10','pitch 500','flanger 15 5 +12 80 4.4 triangle 45 quadratic','oops','highpass 1400','tremolo 15 0.5','overdrive 35 50 gain -13', `echo 1.0 1.0 ${echo_len} 0.4`]
+const fx_list_2 = ['reverb','pitch -120','flanger 5 8 +8 80 4.4 triangle 45 quadratic','oops','highpass 900','tremolo 120 0.1',`echo 1.0 1.0 ${echo_len} 0.4`]
 
 
 // 'reverse','reverb','flanger','oops','reverse','reverb','flanger','oops','highpass 3000','highpass 7000','highpass 4000' //
@@ -175,12 +177,18 @@ const shuffle_loop = (loop, num_frags) => {
         //extract_segment(loop, (num_frags - frags_left), frags_left)
         loop = new_loop
     }
-    console.log('frag_arr: ')
-    console.log(frag_arr)
     
     // concatenate them in the order dictated by the shuffle array
     const shuf_arr = shuffle_array(num_frags)
     console.log(shuf_arr)
+    console.log(frag_arr)
+    for (i = 0; i < num_frags; i++){
+        temp_frag = frag_arr[i]
+        for(const fx of fx_list_2){
+            temp_frag = maybe_add_fx(temp_frag, fx) 
+        }
+        frag_arr[i] = temp_frag
+    }
     let tmp = next_file()
     sox(`${frag_arr[shuf_arr[0]]} ${frag_arr[shuf_arr[1]]} ${tmp}`)
     for (i = 2; i < num_frags; i++){
@@ -209,10 +217,10 @@ const shuffle_loop = (loop, num_frags) => {
 loop1 = shuffle_loop(loop1, 8)
 loop2 = shuffle_loop(loop2, 4)
 
-for(const fx of fx_list){
+/*for(const fx of fx_list){
     loop1 = maybe_add_fx(loop1, fx)
     loop2 = maybe_add_fx(loop2, fx)
-} //this works rn, commenting out for simplicity
+}*/ //this works rn, commenting out for simplicity
 
 loop1 = shuffle_loop(loop1, 4)
 loop2 = shuffle_loop(loop2, 4)
