@@ -16,18 +16,58 @@ while(loop1 === loop2){
 
 // get the lengths of the two loops, and the ratio of length 2 over length 1
 const len = require('./sox').len
+
+const next_file = () => {
+    next_file.seq++
+    console.log(`./output/tmp${next_file.seq}.wav`)
+    return `./output/tmp${next_file.seq}.wav` // Needed to add ./output/ so it goes in the correct folder
+}
+next_file.seq = 0
+
 let len1 = len(loop1)
 let len2 = len(loop2)
+
+if (len1 / len2 > 4) { // if length of loop 1 is 4 times longer or more than loop 2, repeat loop 2 3 times so its 4 times as long, and keep doing this until
+    // make temp of loop2, repeated 3 times
+    // reassess length and keep repeating until loop lengths are within a factor of 4 of each other
+    let new_loop = next_file()
+    sox(`${loop2} ${new_loop} repeat 3`)
+    loop2 = new_loop
+    len2 = len(loop2)
+    /*while (len1 / len2 > 4) {
+        new_loop = next_file()
+        sox(`${loop2} ${new_loop} repeat 3`)
+        loop2 = new_loop
+        len2 = len(loop2)
+    }*/
+}
+
+else if (len2 / len1 > 4){// if length of loop 1 is 4 times longer or more than loop 2, repeat loop 2 3 times so its 4 times as long, and keep doing this until
+    // make temp of loop2, repeated 3 times
+    // reassess length and keep repeating until loop lengths are within a factor of 4 of each other
+    let new_loop = next_file()
+    sox(`${loop1} ${new_loop} repeat 3`)
+    loop1 = new_loop
+    len1 = len(loop1)
+    /*while (len2 / len1 > 4) {
+        new_loop = next_file()
+        sox(`${loop1} ${new_loop} repeat 3`)
+        loop1 = new_loop
+        len1 = len(loop1)
+    }*/
+}
+
+
+len1 = len(loop1)
+len2 = len(loop2)
 const ratio = len2 / len1
 console.log(`len1 is ${len1}, len2 is ${len2}, ratio is ${ratio}.`)
 
 //sox input.wav -r 8000 -c 1 output.wav
 
 sox(`${loop2} ./output/temp2.wav speed ${ratio}`)// is this not just speeding the faster sample up more? idk
-sox(`${loop1} ./output/temp1.wav speed 1`)
+// sox(`${loop1} ./output/temp1.wav speed 1`)
 loop2 = './output/temp2.wav'
-//maybe_add_fx(loop2)
-// WHY IS LOOP1 AND LOOP2 DA SAME TODO
 sox(`${loop1} -r 44100 -c 2 ./output/temp3.wav`)
 sox(`${loop2} -r 44100 -c 2 ./output/temp4.wav`)
 loop1 = './output/temp3.wav'
@@ -35,6 +75,9 @@ loop2 = './output/temp4.wav'
 
 len1 = len(loop1)
 len2 = len(loop2)
+
+
+
 
 const avg_len = (len1 + len2) / 2
 const avg_ratio = len1 / avg_len
@@ -44,12 +87,7 @@ const avg_ratio = len1 / avg_len
 //sox(`-m ${loop1} ${loop2} ./output/mixed.wav speed ${avg_ratio}`)
 // UP TILL NOW, I THINK EVERYTHING WORKS!! :)))
 
-const next_file = () => {
-    next_file.seq++
-    console.log(`./output/tmp${next_file.seq}.wav`)
-    return `./output/tmp${next_file.seq}.wav` // Needed to add ./output/ so it goes in the correct folder
-}
-next_file.seq = 0
+
 
 const extract_segment = (loop, desired_segments, total_segments) => {
     const new_loop = next_file()
@@ -73,7 +111,7 @@ const flip = (force=null) => {
 }
 
 // sometimes reverse loop1:
-/*if(flip()){
+if(flip()){
     const tmp = next_file()
     sox(`${loop1} ${tmp} reverse`)
     loop1 = tmp
@@ -83,7 +121,7 @@ if(flip()){
     const tmp = next_file()
     sox(`${loop2} ${tmp} reverse`)
     loop2 = tmp
-}*/
+}
 
 const maybe_add_fx = (loop, fx) => {
     // not this time?
@@ -226,6 +264,13 @@ const shuffle_loop = (loop, num_frags) => {
     console.log(shuf_arr)
     console.log(frag_arr)
     for (i = 0; i < num_frags; i++){
+        temp_frag = frag_arr[i]
+        // sometimes reverse temp_frag:
+        if(Math.random() > 0.85){
+            const tmp = next_file()
+            sox(`${temp_frag} ${tmp} reverse`)
+            frag_arr[i] = tmp
+        }
         /*
         temp_frag = frag_arr[i]
         for(const fx of fx_list_2){
@@ -261,7 +306,7 @@ const shuffle_loop = (loop, num_frags) => {
 
 
 
-/*
+
 loop1 = maybe_add_fx(loop1, random_chorus())
 loop2 = maybe_add_fx(loop2, random_chorus())
 
@@ -273,7 +318,7 @@ loop2 = maybe_add_fx(loop2, random_reverb())
 
 loop1 = maybe_add_fx(loop1, random_flanger())
 loop2 = maybe_add_fx(loop2, random_flanger())
-*/
+
 
 
 

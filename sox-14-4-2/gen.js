@@ -15,6 +15,6 @@ for(let i=1; i <= repeat; i++){
     exec("node ./mixer.js")
     // Pay attention to the new feature here:
     const file_name = hash_file('./output/mix.wav')
-    move(`./output/mix.wav`, `./genoutput/${file_name}`) 
+    move(`./output/mix.wav`, `./genoutput/lmnoutput_${file_name}`) 
 
 }
