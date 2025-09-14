@@ -16,8 +16,8 @@ while(loop1 === loop2){
 
 // get the lengths of the two loops, and the ratio of length 2 over length 1
 const len = require('./sox').len
-const len1 = len(loop1)
-const len2 = len(loop2)
+let len1 = len(loop1)
+let len2 = len(loop2)
 const ratio = len2 / len1
 console.log(`len1 is ${len1}, len2 is ${len2}, ratio is ${ratio}.`)
 
@@ -33,11 +33,13 @@ sox(`${loop2} -r 44100 -c 2 ./output/temp4.wav`)
 loop1 = './output/temp3.wav'
 loop2 = './output/temp4.wav'
 
-
-//sox(`-m ${loop1} ${loop2} ./output/mixog.wav`) 
+len1 = len(loop1)
+len2 = len(loop2)
 
 const avg_len = (len1 + len2) / 2
 const avg_ratio = len1 / avg_len
+
+
 //console.log(`avg_length is ${avg_len}.`)
 //sox(`-m ${loop1} ${loop2} ./output/mixed.wav speed ${avg_ratio}`)
 // UP TILL NOW, I THINK EVERYTHING WORKS!! :)))
@@ -99,8 +101,8 @@ const maybe_add_fx = (loop, fx) => {
 
 // declarations
 let echo_len = avg_len / 8.0
-const fx_list = ['reverb 30 40 10','pitch 500','flanger 15 5 +12 80 4.4 triangle 45 quadratic','oops','highpass 1400','tremolo 15 0.5','overdrive 35 50 gain -13', `echo 1.0 1.0 ${echo_len} 0.4`]
-const fx_list_2 = ['reverb','pitch -120','flanger 5 8 +8 80 4.4 triangle 45 quadratic','oops','highpass 900','tremolo 120 0.1',`echo 1.0 1.0 ${echo_len} 0.4`]
+const fx_list = ['flanger 15 5 +12 80 4.4 triangle 45 quadratic','oops','highpass 1400','tremolo 15 0.5','overdrive 35 50 gain -13', `echo 1.0 1.0 ${echo_len} 0.4`]
+const fx_list_2 = ['flanger 5 8 +8 80 4.4 triangle 45 quadratic','oops','highpass 900','tremolo 120 0.1',`echo 1.0 1.0 ${echo_len} 0.4`]
 
 
 // 'reverse','reverb','flanger','oops','reverse','reverb','flanger','oops','highpass 3000','highpass 7000','highpass 4000' //
@@ -130,6 +132,47 @@ const maybe_fragment = (loop) => {
     const segment = extract_segment(loop, segments, 4)
     const filler = fill_by_repeating //flip() ? fill_by_repeating : fill_by_resizing // <- this is cool template for a quick if stmt but i want to force repeating for now
     return filler(segment, orig_len)
+}
+
+const random_frag_num = () => {
+    rand_frags_array = [4, 8, 16, 32, 6, 12, 4, 8]
+    return rand_frags_array[Math.ceil(Math.random() * rand_frags_array.length) - 1]
+}
+
+const random_reverb = () => {
+    return ('reverb ' + (Math.round(Math.random() * 100)) + ' ' + (Math.round(Math.random() * 100)) + ' ' + (Math.round(Math.random() * 100)) + ' ' + (Math.round(Math.random() * 100)) + ' ' + (Math.round(Math.random() * 250)))
+}
+
+const random_flanger = () => {
+    let delay = Math.round(Math.random() * 30)
+    let depth = Math.round(Math.random() * 10)
+    let regen = Math.round(Math.random() * 190) - 95
+    let width = Math.round(Math.random() * 100)
+    let speed = ((Math.random() * 9.9) + 0.1).toFixed(2)
+    let shape = flip() ? 'sin' : 'triangle'
+    let phase = Math.round(Math.random() * 100)
+    let interp = flip() ? 'linear' : 'quadratic'
+    return ('flanger ' + delay + ' ' + depth + ' ' + regen + ' ' + width + ' ' + speed + ' ' + shape + ' ' + phase + ' ' + interp)
+}
+
+const random_echo = () => {
+    let gain_in = Math.random().toFixed(2)
+    let gain_out = Math.random().toFixed(2)
+    let delay = Math.round(Math.random() * 250)
+    let decay = Math.random().toFixed(2)
+    return ('echo ' + gain_in + ' ' + gain_out + ' ' + delay + ' ' + decay)
+}
+
+const random_chorus = () => {
+    let gain_in = Math.random().toFixed(2)
+    let gain_out = Math.random().toFixed(2)
+    let delay = Math.floor(Math.random() * 80) + 19
+    let decay = Math.random().toFixed(2)
+    let speed = ((Math.random() * 4.85) + 0.11).toFixed(2)
+    let depth = Math.round(Math.random() * 10)
+    let s_t = flip() ? '-s' : '-t'
+    return ('chorus ' + gain_in + ' ' + gain_out + ' ' + delay + ' ' + decay + ' ' + speed + ' ' + depth + ' ' + s_t)
+    //return ('chorus 0.7 0.9 55 0.4 0.25 2 -t') // or -t? chorus 0.7 0.9 55 0.4 0.25 2 -t
 }
 
 const shuffle_array = (num_frags) => {
@@ -183,11 +226,13 @@ const shuffle_loop = (loop, num_frags) => {
     console.log(shuf_arr)
     console.log(frag_arr)
     for (i = 0; i < num_frags; i++){
+        /*
         temp_frag = frag_arr[i]
         for(const fx of fx_list_2){
             temp_frag = maybe_add_fx(temp_frag, fx) 
         }
         frag_arr[i] = temp_frag
+        */
     }
     let tmp = next_file()
     sox(`${frag_arr[shuf_arr[0]]} ${frag_arr[shuf_arr[1]]} ${tmp}`)
@@ -214,16 +259,44 @@ const shuffle_loop = (loop, num_frags) => {
 
 // end declarations
 
-loop1 = shuffle_loop(loop1, 8)
-loop2 = shuffle_loop(loop2, 4)
 
-/*for(const fx of fx_list){
+
+/*
+loop1 = maybe_add_fx(loop1, random_chorus())
+loop2 = maybe_add_fx(loop2, random_chorus())
+
+loop1 = maybe_add_fx(loop1, random_echo())
+loop2 = maybe_add_fx(loop2, random_echo())
+
+loop1 = maybe_add_fx(loop1, random_reverb())
+loop2 = maybe_add_fx(loop2, random_reverb())
+
+loop1 = maybe_add_fx(loop1, random_flanger())
+loop2 = maybe_add_fx(loop2, random_flanger())
+*/
+
+
+
+
+
+if(flip()){
+    loop1 = shuffle_loop(loop1, random_frag_num())
+}
+// sometimes reverse loop2:
+if(flip()){
+    loop2 = shuffle_loop(loop2, random_frag_num())
+}
+
+
+
+/*
+for(const fx of fx_list){
     loop1 = maybe_add_fx(loop1, fx)
     loop2 = maybe_add_fx(loop2, fx)
-}*/ //this works rn, commenting out for simplicity
-
-loop1 = shuffle_loop(loop1, 4)
-loop2 = shuffle_loop(loop2, 4)
+} //this works rn, commenting out for simplicity
+*/
+loop1 = shuffle_loop(loop1, random_frag_num())
+loop2 = shuffle_loop(loop2, random_frag_num())
 
 //loop1 = maybe_fragment(loop1)
 //loop2 = maybe_fragment(loop2)
