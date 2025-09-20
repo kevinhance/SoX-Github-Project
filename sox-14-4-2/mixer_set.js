@@ -1,4 +1,5 @@
 const readdir = require('fs').readdirSync
+const inquirer = require
 const sox = require('./sox').run
 const path = require('path')
 const files = readdir("./input").filter(f => f.match(".wav"))
@@ -14,28 +15,53 @@ let num_chosen = -1
 let loop1 = select()
 let loop2 = select()
 
-var input_init = prompt("Would you like to choose 0, 1, or 2 loops yourself? ")
-if(input_init == "1"){
+//var input_init = prompt("Would you like to choose 0, 1, or 2 loops yourself? ")
+if(process.argv.length = 3){
+    console.log("CHECK 3")
     num_chosen = 1
     // do console response
-    let loop1_input = prompt("enter filename with extension: ")
+
+    loop1 = process.argv[2]
+    console.log(loop1)
+    loop1 = "\"./input/" + loop1 + "\""
+    //loop1 = path.join("\"./input", loop1 + "\"")
+    console.log(loop1)
+
+
+    /*let loop1_input = prompt("enter filename with extension: ")
     loop1 = path.join("\"./input", loop1_input + "\"")
-    console.log("name of loop1: " + loop1)
+    console.log("name of loop1: " + loop1)*/
+
     // go thru process of getting filename for first
     loop2 = select()
 }
-else if(input_init == "2"){
+else if(process.argv.length = 4){
+    console.log("CHECK 4")
     num_chosen = 2
-    let loop1_input = prompt("enter filename for loop 1 with extension: ")
+
+    /*let loop1_input = prompt("enter filename for loop 1 with extension: ")
     loop1 = path.join("\"./input", loop1_input + "\"")
     console.log("name of loop1: " + loop1)
     let loop2_input = prompt("enter filename for loop 2 with extension: ")
     loop1 = path.join("\"./input", loop2_input + "\"")
-    console.log("name of loop2: " + loop2)
+    console.log("name of loop2: " + loop2)*/
+
+    loop1 = process.argv[2]
+    console.log(loop1)
+    loop1 = "\"./input/" + loop1 + "\""
+    //loop1 = path.join("\"./input", loop1 + "\"")
+    console.log(loop1)
+    loop2 = process.argv[3]
+    console.log(loop1)
+    loop2 = "\"./input/" + loop2 + "\""
+    //loop2 = path.join("\"./input", loop2 + "\"")
+    console.log(loop2)
+
     // do console response
     // go thru process of getting filename for both
 }
 else {
+    console.log("CHECK ELSE")
     num_chosen = 0
     // auto select both
     loop1 = select()
