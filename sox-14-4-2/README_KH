@@ -1,6 +1,0 @@
-Hey there!
-
-If you intend to use this on your own machine, make sure to add folders "input", "output", and "genoutput" into the "sox-14-4-2" folder.
-I git-ignored these folder on my end since they are either 5 GB in size, like my input folder, or constantly being filled with temp files,
-like the output folder. This was an easy solution on my end to get this repository online without commits always including all my .wav files.
-My apologies for the inconvenience  o7
