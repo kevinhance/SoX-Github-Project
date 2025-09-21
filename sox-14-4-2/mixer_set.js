@@ -48,13 +48,13 @@ else if(process.argv.length = 4){
 
     loop1 = process.argv[2]
     console.log(loop1)
-    loop1 = "\"./input/" + loop1 + "\""
-    //loop1 = path.join("\"./input", loop1 + "\"")
+    //loop1 = "\"./input/" + loop1 + "\""
+    loop1 = path.join("./input", loop1)
     console.log(loop1)
     loop2 = process.argv[3]
     console.log(loop1)
-    loop2 = "\"./input/" + loop2 + "\""
-    //loop2 = path.join("\"./input", loop2 + "\"")
+    //loop2 = "\"./input/" + loop2 + "\""
+    loop2 = path.join("./input", loop2)
     console.log(loop2)
 
     // do console response
@@ -267,7 +267,7 @@ const random_echo = () => {
 const random_chorus = () => {
     let gain_in = Math.random().toFixed(2)
     let gain_out = Math.random().toFixed(2)
-    let delay = Math.floor(Math.random() * 80) + 19
+    let delay = Math.floor(Math.random() * 80) + 20
     let decay = Math.random().toFixed(2)
     let speed = ((Math.random() * 4.85) + 0.11).toFixed(2)
     let depth = Math.round(Math.random() * 10)
