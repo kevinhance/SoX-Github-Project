@@ -16,6 +16,12 @@ let loop1 = select()
 let loop2 = select()
 
 //var input_init = prompt("Would you like to choose 0, 1, or 2 loops yourself? ")
+console.log('arg 0')
+console.log(process.argv[0])
+console.log('arg 2')
+console.log(process.argv[2])
+console.log('arg 3')
+console.log(process.argv[3])
 if(process.argv.length = 3){
     console.log("CHECK 3")
     num_chosen = 1
@@ -262,6 +268,13 @@ const random_echo = () => {
     let delay = Math.round(Math.random() * 250)
     let decay = Math.random().toFixed(2)
     return ('echo ' + gain_in + ' ' + gain_out + ' ' + delay + ' ' + decay)
+    
+}
+
+const random_overdrive = () => {
+    let gain = Math.round(Math.random() * 100)
+    let color = Math.round(Math.random() * 100)
+    return ('overdrive  ' + gain + ' ' + color)
 }
 
 const random_chorus = () => {
@@ -381,6 +394,9 @@ loop2 = maybe_add_fx(loop2, random_reverb())
 
 loop1 = maybe_add_fx(loop1, random_flanger())
 loop2 = maybe_add_fx(loop2, random_flanger())
+
+loop1 = maybe_add_fx(loop1, random_overdrive())
+loop2 = maybe_add_fx(loop2, random_overdrive())
 
 
 

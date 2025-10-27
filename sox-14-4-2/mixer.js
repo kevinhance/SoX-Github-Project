@@ -181,7 +181,8 @@ const random_reverb = () => {
     return ('reverb ' + (Math.round(Math.random() * 100)) + ' ' + (Math.round(Math.random() * 100)) + ' ' + (Math.round(Math.random() * 100)) + ' ' + (Math.round(Math.random() * 100)) + ' ' + (Math.round(Math.random() * 250)))
 }
 
-const random_flanger = () => {
+
+const random_flanger = () => { // ./sox.exe "./input/Reggae Vibes 1.wav" ./output/flangertest.wav flanger 10 10 -70 70 10 sin 40 linear 
     let delay = Math.round(Math.random() * 30)
     let depth = Math.round(Math.random() * 10)
     let regen = Math.round(Math.random() * 190) - 95
@@ -199,6 +200,12 @@ const random_echo = () => {
     let delay = Math.round(Math.random() * 250)
     let decay = Math.random().toFixed(2)
     return ('echo ' + gain_in + ' ' + gain_out + ' ' + delay + ' ' + decay)
+}
+
+const random_overdrive = () => {
+    let gain = Math.round(Math.random() * 100)
+    let color = Math.round(Math.random() * 100)
+    return ('overdrive  ' + gain + ' ' + color)
 }
 
 const random_chorus = () => {
@@ -318,6 +325,9 @@ loop2 = maybe_add_fx(loop2, random_reverb())
 
 loop1 = maybe_add_fx(loop1, random_flanger())
 loop2 = maybe_add_fx(loop2, random_flanger())
+
+loop1 = maybe_add_fx(loop1, random_overdrive())
+loop2 = maybe_add_fx(loop2, random_overdrive())
 
 
 
